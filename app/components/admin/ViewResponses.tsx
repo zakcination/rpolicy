@@ -27,14 +27,17 @@ export default function ViewResponses() {
         // Try to fetch responses from the API
         const response = await api.get("/responses")
 
+        // Ensure we have valid responses (filter out any null or undefined items)
+        const validResponses = response.data.filter((item: any) => item && item._id)
+
         // Map the API response to our expected format
-        const formattedResponses = response.data.map((item: any) => ({
+        const formattedResponses = validResponses.map((item: any) => ({
           _id: item._id,
           questionnaireId: item.questionnaireId,
           token: item.token,
-          answers: item.answers,
-          duration: item.duration,
-          feedback: item.feedback || item.report,
+          answers: item.answers || [],
+          duration: item.duration || 0,
+          feedback: item.feedback || item.report || [],
           submittedAt: item.submittedAt || new Date().toISOString(),
           discipline: item.discipline || "N/A",
         }))
@@ -55,23 +58,11 @@ export default function ViewResponses() {
 
         // Fetch questionnaire details for each token
         const questionnairesData: Record<string, any> = {}
-        const questionMapping: Record<string, any> = {}
 
         for (const token of Object.keys(grouped)) {
           try {
             const questionnaireResponse = await api.get(`/questionnaire/${token}`)
             questionnairesData[token] = questionnaireResponse.data
-
-            // Create a map of question IDs to question text
-            if (questionnaireResponse.data.questions) {
-              questionnaireResponse.data.questions.forEach((q: any) => {
-                questionMapping[q._id] = {
-                  text: q.stem || q.text,
-                  type: q.type,
-                  options: q.options || [],
-                }
-              })
-            }
           } catch (error) {
             console.error(`Error fetching questionnaire for token ${token}:`, error)
             questionnairesData[token] = {
@@ -164,54 +155,85 @@ export default function ViewResponses() {
   }
 
   // Function to determine feedback quality level
-  const getFeedbackQuality = (feedback: any[]) => {
-    if (!feedback || !Array.isArray(feedback) || feedback.length === 0) return "neutral"
+  const getFeedbackQuality = (feedback: any) => {
+    if (!feedback) return "neutral"
 
-    // Count correctness levels
-    let correctCount = 0
-    let incorrectCount = 0
-    let neutralCount = 0
+    // Handle array of feedback items with correctness/compliance properties
+    if (Array.isArray(feedback) && feedback.some((item) => item.correctness || item.compliance)) {
+      // Count correctness levels
+      let correctCount = 0
+      let incorrectCount = 0
+      let neutralCount = 0
 
-    feedback.forEach((item) => {
-      if (item.correctness) {
-        if (item.correctness.toLowerCase().includes("correct")) {
-          correctCount++
-        } else if (item.correctness.toLowerCase().includes("incorrect")) {
-          incorrectCount++
-        } else {
-          neutralCount++
+      feedback.forEach((item) => {
+        if (item.correctness) {
+          if (item.correctness.toLowerCase().includes("correct")) {
+            correctCount++
+          } else if (item.correctness.toLowerCase().includes("incorrect")) {
+            incorrectCount++
+          } else {
+            neutralCount++
+          }
         }
-      }
 
-      if (item.compliance) {
-        if (item.compliance.toLowerCase().includes("fully")) {
-          correctCount++
-        } else if (item.compliance.toLowerCase().includes("not")) {
-          incorrectCount++
-        } else {
-          neutralCount++
+        if (item.compliance) {
+          if (item.compliance.toLowerCase().includes("fully")) {
+            correctCount++
+          } else if (item.compliance.toLowerCase().includes("not")) {
+            incorrectCount++
+          } else {
+            neutralCount++
+          }
         }
-      }
-    })
+      })
 
-    // Determine overall quality
-    if (correctCount > incorrectCount && correctCount > neutralCount) {
-      return "positive"
-    } else if (incorrectCount > correctCount && incorrectCount > neutralCount) {
-      return "negative"
-    } else {
-      return "neutral"
+      // Determine overall quality
+      if (correctCount > incorrectCount && correctCount > neutralCount) {
+        return "positive"
+      } else if (incorrectCount > correctCount && incorrectCount > neutralCount) {
+        return "negative"
+      } else {
+        return "neutral"
+      }
     }
+
+    // Handle array of feedback items with status property
+    if (Array.isArray(feedback) && feedback.some((item) => item.status)) {
+      const positiveCount = feedback.filter((item) => item.status && item.status.toLowerCase() === "positive").length
+
+      const negativeCount = feedback.filter((item) => item.status && item.status.toLowerCase() === "negative").length
+
+      if (positiveCount > negativeCount) {
+        return "positive"
+      } else if (negativeCount > positiveCount) {
+        return "negative"
+      } else {
+        return "neutral"
+      }
+    }
+
+    return "neutral"
   }
 
   // Function to get feedback summary
-  const getFeedbackSummary = (feedback: any[]) => {
-    if (!feedback || !Array.isArray(feedback) || feedback.length === 0) return "No feedback available"
+  const getFeedbackSummary = (feedback: any) => {
+    if (!feedback) return "No feedback available"
 
-    // Get the first recommendation or insight
-    for (const item of feedback) {
-      if (item.recommendation) return item.recommendation.substring(0, 60) + "..."
-      if (item.insight) return item.insight.substring(0, 60) + "..."
+    // Handle array of feedback items with status property
+    if (Array.isArray(feedback) && feedback.some((item) => item.status && item.text)) {
+      const firstItem = feedback.find((item) => item.status && item.text)
+      if (firstItem) {
+        return firstItem.text.substring(0, 60) + (firstItem.text.length > 60 ? "..." : "")
+      }
+    }
+
+    // Handle array of feedback items with correctness/compliance properties
+    if (Array.isArray(feedback) && feedback.some((item) => item.correctness || item.compliance)) {
+      // Get the first recommendation or insight
+      for (const item of feedback) {
+        if (item.recommendation) return item.recommendation.substring(0, 60) + "..."
+        if (item.insight) return item.insight.substring(0, 60) + "..."
+      }
     }
 
     return "Feedback available"
@@ -229,6 +251,9 @@ export default function ViewResponses() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-primary">Questionnaire Responses</h2>
+        <div className="text-sm text-gray-500">
+          Total Responses: <span className="font-medium">{responses.length}</span>
+        </div>
       </div>
 
       <FilterBar onFilter={handleFilter} showAudienceFilter={false} />

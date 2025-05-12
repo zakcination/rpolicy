@@ -8,7 +8,7 @@ import { CheckCircle, Info, ThumbsUp, ThumbsDown } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 interface QuestionnaireFeedbackProps {
-  feedback: any[]
+  feedback: any
   answers: any[]
   questionnaire: any
 }
@@ -51,18 +51,55 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
     navigate("/surveys")
   }
 
-  // Extract general feedback if available
-  const generalFeedback =
-    Array.isArray(feedback) && feedback.length > 0 && feedback[0].feedback
-      ? feedback[0].feedback
-      : Array.isArray(feedback) && feedback.some((item) => item.status)
-        ? feedback.filter((item) => item.status)
-        : null
+  // Normalize feedback to handle different formats
+  const normalizedFeedback = () => {
+    // If feedback is null or undefined
+    if (!feedback) return { generalFeedback: [], questionFeedback: [] }
+
+    // If feedback is already an array
+    if (Array.isArray(feedback)) {
+      // Check if it contains items with status (general feedback)
+      if (feedback.some((item) => item.status)) {
+        return {
+          generalFeedback: feedback.filter((item) => item.status),
+          questionFeedback: feedback.filter((item) => !item.status && (item.correctness || item.compliance)),
+        }
+      }
+
+      // Otherwise, it's question-by-question feedback
+      return {
+        generalFeedback: [],
+        questionFeedback: feedback,
+      }
+    }
+
+    // If feedback has report and feedback properties
+    if (feedback.report && feedback.feedback) {
+      return {
+        generalFeedback: Array.isArray(feedback.feedback) ? feedback.feedback : [],
+        questionFeedback: Array.isArray(feedback.report) ? feedback.report : [],
+      }
+    }
+
+    // If feedback only has report property
+    if (feedback.report) {
+      return {
+        generalFeedback: [],
+        questionFeedback: Array.isArray(feedback.report) ? feedback.report : [],
+      }
+    }
+
+    // Default case
+    return { generalFeedback: [], questionFeedback: [] }
+  }
+
+  const { generalFeedback, questionFeedback } = normalizedFeedback()
 
   if (
     !feedback ||
-    (!Array.isArray(feedback) && !feedback.report) ||
-    (Array.isArray(feedback) && feedback.length === 0)
+    (Array.isArray(feedback) &&
+      feedback.length === 0 &&
+      (!feedback?.report || (Array.isArray(feedback?.report) && feedback.report.length === 0)))
   ) {
     return (
       <>
@@ -92,10 +129,6 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
     )
   }
 
-  // Handle the case where feedback is in the report format
-  const reportItems = !Array.isArray(feedback) && feedback.report ? feedback.report : null
-  const feedbackItems = !Array.isArray(feedback) && feedback.feedback ? feedback.feedback : null
-
   return (
     <>
       <CardContent className="pt-6 space-y-6">
@@ -107,76 +140,48 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
         </Alert>
 
         {/* General Feedback Section */}
-        {(generalFeedback || feedbackItems) && (
+        {generalFeedback.length > 0 && (
           <div className="space-y-4">
             <h3 className="font-medium text-gray-800">Overall Feedback</h3>
-            {generalFeedback &&
-              generalFeedback.map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className={`p-4 rounded-md border ${
-                    item.status && item.status.toLowerCase() === "positive"
-                      ? "bg-green-50 border-green-200"
-                      : "bg-amber-50 border-amber-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    {item.status && item.status.toLowerCase() === "positive" ? (
-                      <ThumbsUp className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <ThumbsDown className="h-5 w-5 text-amber-600" />
-                    )}
-                    <h4 className="font-medium">{item.status || "Feedback"}</h4>
-                  </div>
-                  <p className="text-sm mb-2">{item.text}</p>
-                  {item.recommendations && (
-                    <div className="mt-2 p-2 bg-white bg-opacity-50 rounded text-sm">
-                      <span className="font-medium">Recommendation: </span>
-                      {item.recommendations}
-                    </div>
+            {generalFeedback.map((item: any, index: number) => (
+              <div
+                key={index}
+                className={`p-4 rounded-md border ${
+                  item.status && item.status.toLowerCase() === "positive"
+                    ? "bg-green-50 border-green-200"
+                    : "bg-amber-50 border-amber-200"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  {item.status && item.status.toLowerCase() === "positive" ? (
+                    <ThumbsUp className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <ThumbsDown className="h-5 w-5 text-amber-600" />
                   )}
+                  <h4 className="font-medium">{item.status || "Feedback"}</h4>
                 </div>
-              ))}
-
-            {feedbackItems &&
-              feedbackItems.map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className={`p-4 rounded-md border ${
-                    item.status && item.status.toLowerCase() === "positive"
-                      ? "bg-green-50 border-green-200"
-                      : "bg-amber-50 border-amber-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    {item.status && item.status.toLowerCase() === "positive" ? (
-                      <ThumbsUp className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <ThumbsDown className="h-5 w-5 text-amber-600" />
-                    )}
-                    <h4 className="font-medium">{item.status || "Feedback"}</h4>
+                <p className="text-sm mb-2">{item.text}</p>
+                {item.recommendations && (
+                  <div className="mt-2 p-2 bg-white bg-opacity-50 rounded text-sm">
+                    <span className="font-medium">Recommendation: </span>
+                    {item.recommendations}
                   </div>
-                  <p className="text-sm mb-2">{item.text}</p>
-                  {item.recommendations && (
-                    <div className="mt-2 p-2 bg-white bg-opacity-50 rounded text-sm">
-                      <span className="font-medium">Recommendation: </span>
-                      {item.recommendations}
-                    </div>
-                  )}
-                </div>
-              ))}
+                )}
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="space-y-6">
-          <h3 className="font-medium text-gray-800">Question-by-Question Feedback</h3>
-          {Array.isArray(feedback) &&
-            feedback.map((item, index) => {
+        {/* Question-by-Question Feedback */}
+        {questionFeedback.length > 0 && (
+          <div className="space-y-6">
+            <h3 className="font-medium text-gray-800">Question-by-Question Feedback</h3>
+            {questionFeedback.map((item, index) => {
               const questionId = answers && answers[index] ? answers[index].questionId : null
               const questionText = questionId
                 ? getQuestionText(questionId)
                 : item.questionStem || `Question ${index + 1}`
-              const answerText = answers && answers[index] ? answers[index].answer : "No answer provided"
+              const answerText = answers && answers[index] ? answers[index].answer : item.answer || "No answer provided"
 
               return (
                 <div key={index} className={`p-4 rounded-md border ${getFeedbackQualityClass(item)}`}>
@@ -204,6 +209,22 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
                       </div>
                     )}
 
+                    {item.fruitfulness && (
+                      <div className="flex items-start gap-2">
+                        <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-800">
+                          {item.fruitfulness}
+                        </Badge>
+                      </div>
+                    )}
+
+                    {item.sensitivity && (
+                      <div className="flex items-start gap-2">
+                        <Badge variant="outline" className="bg-purple-50 border-purple-200 text-purple-800">
+                          {item.sensitivity}
+                        </Badge>
+                      </div>
+                    )}
+
                     {item.recommendation && (
                       <div className="mt-2">
                         <p className="text-xs font-medium text-gray-600 mb-1">Recommendation:</p>
@@ -224,53 +245,8 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
                 </div>
               )
             })}
-
-          {reportItems &&
-            reportItems.map((item: any, index: number) => (
-              <div key={index} className={`p-4 rounded-md border ${getFeedbackQualityClass(item)}`}>
-                <h3 className="font-medium mb-2">{item.questionStem || `Question ${index + 1}`}</h3>
-
-                <div className="mb-3 p-2 bg-white bg-opacity-50 rounded">
-                  <p className="text-sm font-medium text-gray-500">Your Answer:</p>
-                  <p className="text-gray-800">{item.answer}</p>
-                </div>
-
-                <div className="space-y-3">
-                  {item.correctness && (
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className={getFeedbackQualityClass(item)}>
-                        {item.correctness}
-                      </Badge>
-                    </div>
-                  )}
-
-                  {item.compliance && (
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className={getFeedbackQualityClass(item)}>
-                        {item.compliance}
-                      </Badge>
-                    </div>
-                  )}
-
-                  {item.fruitfulness && (
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-800">
-                        {item.fruitfulness}
-                      </Badge>
-                    </div>
-                  )}
-
-                  {item.sensitivity && (
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="bg-purple-50 border-purple-200 text-purple-800">
-                        {item.sensitivity}
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
+          </div>
+        )}
 
         <div className="p-4 bg-secondary/10 rounded-md">
           <h3 className="font-medium text-gray-800 mb-2">What's Next?</h3>

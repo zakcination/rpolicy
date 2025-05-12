@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, ArrowLeft, ChevronLeft, ChevronRight, FileText } from "lucide-react"
+import { AlertCircle, ArrowLeft, ChevronLeft, ChevronRight, FileText, ThumbsUp, ThumbsDown } from "lucide-react"
 import api from "../../services/api"
 
 export default function ResponseDetails() {
@@ -30,11 +30,14 @@ export default function ResponseDetails() {
         // Fetch all responses first to enable navigation
         const responsesResponse = await api.get("/responses")
         const allResponsesData = responsesResponse.data || []
-        setAllResponses(allResponsesData)
+
+        // Ensure we have a clean array of responses
+        const cleanedResponses = allResponsesData.filter((r: any) => r && r._id)
+        setAllResponses(cleanedResponses)
 
         // Find the current response and its index
-        const currentResponse = allResponsesData.find((r: any) => r._id === responseId)
-        const index = allResponsesData.findIndex((r: any) => r._id === responseId)
+        const currentResponse = cleanedResponses.find((r: any) => r._id === responseId)
+        const index = cleanedResponses.findIndex((r: any) => r._id === responseId)
         setCurrentIndex(index)
 
         if (!currentResponse) {
@@ -89,44 +92,69 @@ export default function ResponseDetails() {
   }
 
   // Function to determine feedback quality level
-  const getFeedbackQuality = (feedback: any[]) => {
-    if (!feedback || !Array.isArray(feedback) || feedback.length === 0) return "neutral"
+  const getFeedbackQuality = (feedback: any) => {
+    if (!feedback) return "neutral"
 
-    // Count correctness levels
-    let correctCount = 0
-    let incorrectCount = 0
-    let neutralCount = 0
+    // Handle array of feedback items with correctness/compliance properties
+    if (Array.isArray(feedback) && feedback.some((item) => item.correctness || item.compliance)) {
+      // Count correctness levels
+      let correctCount = 0
+      let incorrectCount = 0
+      let neutralCount = 0
 
-    feedback.forEach((item) => {
-      if (item.correctness) {
-        if (item.correctness.toLowerCase().includes("correct")) {
-          correctCount++
-        } else if (item.correctness.toLowerCase().includes("incorrect")) {
-          incorrectCount++
-        } else {
-          neutralCount++
+      feedback.forEach((item) => {
+        if (item.correctness) {
+          if (item.correctness.toLowerCase().includes("correct")) {
+            correctCount++
+          } else if (item.correctness.toLowerCase().includes("incorrect")) {
+            incorrectCount++
+          } else {
+            neutralCount++
+          }
         }
-      }
 
-      if (item.compliance) {
-        if (item.compliance.toLowerCase().includes("fully")) {
-          correctCount++
-        } else if (item.compliance.toLowerCase().includes("not")) {
-          incorrectCount++
-        } else {
-          neutralCount++
+        if (item.compliance) {
+          if (item.compliance.toLowerCase().includes("fully")) {
+            correctCount++
+          } else if (item.compliance.toLowerCase().includes("not")) {
+            incorrectCount++
+          } else {
+            neutralCount++
+          }
         }
-      }
-    })
+      })
 
-    // Determine overall quality
-    if (correctCount > incorrectCount && correctCount > neutralCount) {
-      return "positive"
-    } else if (incorrectCount > correctCount && incorrectCount > neutralCount) {
-      return "negative"
-    } else {
-      return "neutral"
+      // Determine overall quality
+      if (correctCount > incorrectCount && correctCount > neutralCount) {
+        return "positive"
+      } else if (incorrectCount > correctCount && incorrectCount > neutralCount) {
+        return "negative"
+      } else {
+        return "neutral"
+      }
     }
+
+    // Handle array of feedback items with status property
+    if (Array.isArray(feedback) && feedback.some((item) => item.status)) {
+      const positiveCount = feedback.filter((item) => item.status && item.status.toLowerCase() === "positive").length
+
+      const negativeCount = feedback.filter((item) => item.status && item.status.toLowerCase() === "negative").length
+
+      if (positiveCount > negativeCount) {
+        return "positive"
+      } else if (negativeCount > positiveCount) {
+        return "negative"
+      } else {
+        return "neutral"
+      }
+    }
+
+    // Handle object with report array
+    if (!Array.isArray(feedback) && feedback.report) {
+      return getFeedbackQuality(feedback.report)
+    }
+
+    return "neutral"
   }
 
   // Format date function
@@ -172,13 +200,18 @@ export default function ResponseDetails() {
     )
   }
 
-  // Extract report and feedback from the response
+  // Extract feedback from the response
+  const feedbackItems = response.feedback || []
   const reportItems =
-    response.feedback && Array.isArray(response.feedback)
-      ? response.feedback
-      : response.report && Array.isArray(response.report)
-        ? response.report
-        : []
+    Array.isArray(feedbackItems) && feedbackItems.some((item) => item.correctness || item.compliance)
+      ? feedbackItems
+      : response.report || []
+
+  // Extract general feedback (items with status property)
+  const generalFeedback =
+    Array.isArray(feedbackItems) && feedbackItems.some((item) => item.status)
+      ? feedbackItems.filter((item) => item.status)
+      : []
 
   return (
     <div className="space-y-6">
@@ -223,17 +256,17 @@ export default function ResponseDetails() {
               variant="outline"
               className={`
                 ${
-                  getFeedbackQuality(reportItems) === "positive"
+                  getFeedbackQuality(feedbackItems) === "positive"
                     ? "bg-green-50 text-green-700 border-green-200"
-                    : getFeedbackQuality(reportItems) === "negative"
+                    : getFeedbackQuality(feedbackItems) === "negative"
                       ? "bg-red-50 text-red-700 border-red-200"
                       : "bg-amber-50 text-amber-700 border-amber-200"
                 }
               `}
             >
-              {getFeedbackQuality(reportItems) === "positive"
+              {getFeedbackQuality(feedbackItems) === "positive"
                 ? "Positive"
-                : getFeedbackQuality(reportItems) === "negative"
+                : getFeedbackQuality(feedbackItems) === "negative"
                   ? "Needs Improvement"
                   : "Neutral"}
             </Badge>
@@ -263,6 +296,40 @@ export default function ResponseDetails() {
               </div>
             </div>
 
+            {generalFeedback.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium text-primary mb-4">Overall Feedback</h3>
+                <div className="space-y-4">
+                  {generalFeedback.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-md border ${
+                        item.status && item.status.toLowerCase() === "positive"
+                          ? "bg-green-50 border-green-200"
+                          : "bg-amber-50 border-amber-200"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        {item.status && item.status.toLowerCase() === "positive" ? (
+                          <ThumbsUp className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <ThumbsDown className="h-5 w-5 text-amber-600" />
+                        )}
+                        <h4 className="font-medium">{item.status || "Feedback"}</h4>
+                      </div>
+                      <p className="text-sm mb-2">{item.text}</p>
+                      {item.recommendations && (
+                        <div className="mt-2 p-2 bg-white bg-opacity-50 rounded text-sm">
+                          <span className="font-medium">Recommendation: </span>
+                          {item.recommendations}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div>
               <h3 className="text-lg font-medium text-primary mb-4">Answers</h3>
               <div className="space-y-4">
@@ -286,84 +353,86 @@ export default function ResponseDetails() {
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-medium text-primary mb-4">Feedback</h3>
-              <div className="space-y-4">
-                {reportItems.map((item: any, index: number) => (
-                  <div
-                    key={index}
-                    className={`p-4 rounded-md border ${
-                      item.correctness?.toLowerCase().includes("correct") ||
-                      item.compliance?.toLowerCase().includes("fully")
-                        ? "bg-green-50 border-green-200"
-                        : item.correctness?.toLowerCase().includes("incorrect") ||
-                            item.compliance?.toLowerCase().includes("not")
-                          ? "bg-red-50 border-red-200"
-                          : "bg-amber-50 border-amber-200"
-                    }`}
-                  >
-                    <h4 className="font-medium">{item.questionStem || `Question ${index + 1}`}</h4>
+            {reportItems.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium text-primary mb-4">Question-by-Question Feedback</h3>
+                <div className="space-y-4">
+                  {reportItems.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-md border ${
+                        item.correctness?.toLowerCase().includes("correct") ||
+                        item.compliance?.toLowerCase().includes("fully")
+                          ? "bg-green-50 border-green-200"
+                          : item.correctness?.toLowerCase().includes("incorrect") ||
+                              item.compliance?.toLowerCase().includes("not")
+                            ? "bg-red-50 border-red-200"
+                            : "bg-amber-50 border-amber-200"
+                      }`}
+                    >
+                      <h4 className="font-medium">{item.questionStem || `Question ${index + 1}`}</h4>
 
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {item.correctness && (
-                        <Badge
-                          variant={item.correctness.includes("Correct") ? "default" : "outline"}
-                          className={`text-xs ${
-                            item.correctness.includes("Correct")
-                              ? "bg-green-100 text-green-800 border-green-300"
-                              : "bg-red-100 text-red-800 border-red-300"
-                          }`}
-                        >
-                          {item.correctness}
-                        </Badge>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {item.correctness && (
+                          <Badge
+                            variant={item.correctness.includes("Correct") ? "default" : "outline"}
+                            className={`text-xs ${
+                              item.correctness.includes("Correct")
+                                ? "bg-green-100 text-green-800 border-green-300"
+                                : "bg-red-100 text-red-800 border-red-300"
+                            }`}
+                          >
+                            {item.correctness}
+                          </Badge>
+                        )}
+                        {item.fruitfulness && (
+                          <Badge variant="outline" className="text-xs">
+                            {item.fruitfulness}
+                          </Badge>
+                        )}
+                        {item.compliance && (
+                          <Badge
+                            variant={item.compliance.includes("Fully") ? "default" : "outline"}
+                            className={`text-xs ${
+                              item.compliance.includes("Fully")
+                                ? "bg-green-100 text-green-800 border-green-300"
+                                : "bg-amber-100 text-amber-800 border-amber-300"
+                            }`}
+                          >
+                            {item.compliance}
+                          </Badge>
+                        )}
+                        {item.sensitivity && (
+                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-800 border-blue-200">
+                            {item.sensitivity}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {item.recommendation && (
+                        <div className="mt-2">
+                          <p className="text-xs font-medium text-gray-600">Recommendation:</p>
+                          <p className="text-sm mt-1 p-2 bg-blue-50 rounded-md text-blue-800">{item.recommendation}</p>
+                        </div>
                       )}
-                      {item.fruitfulness && (
-                        <Badge variant="outline" className="text-xs">
-                          {item.fruitfulness}
-                        </Badge>
-                      )}
-                      {item.compliance && (
-                        <Badge
-                          variant={item.compliance.includes("Fully") ? "default" : "outline"}
-                          className={`text-xs ${
-                            item.compliance.includes("Fully")
-                              ? "bg-green-100 text-green-800 border-green-300"
-                              : "bg-amber-100 text-amber-800 border-amber-300"
-                          }`}
-                        >
-                          {item.compliance}
-                        </Badge>
-                      )}
-                      {item.sensitivity && (
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-800 border-blue-200">
-                          {item.sensitivity}
-                        </Badge>
+
+                      {item.insight && (
+                        <div className="mt-2">
+                          <p className="text-xs font-medium text-gray-600">Insight:</p>
+                          <p className="text-sm mt-1 p-2 bg-purple-50 rounded-md text-purple-800">{item.insight}</p>
+                        </div>
                       )}
                     </div>
+                  ))}
 
-                    {item.recommendation && (
-                      <div className="mt-2">
-                        <p className="text-xs font-medium text-gray-600">Recommendation:</p>
-                        <p className="text-sm mt-1 p-2 bg-blue-50 rounded-md text-blue-800">{item.recommendation}</p>
-                      </div>
-                    )}
-
-                    {item.insight && (
-                      <div className="mt-2">
-                        <p className="text-xs font-medium text-gray-600">Insight:</p>
-                        <p className="text-sm mt-1 p-2 bg-purple-50 rounded-md text-purple-800">{item.insight}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {reportItems.length === 0 && (
-                  <div className="p-4 bg-gray-50 rounded-md text-gray-700">
-                    No detailed feedback available for this response.
-                  </div>
-                )}
+                  {reportItems.length === 0 && (
+                    <div className="p-4 bg-gray-50 rounded-md text-gray-700">
+                      No detailed feedback available for this response.
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
