@@ -9,6 +9,7 @@ import NotFound from "./shared/NotFound"
 import { authService } from "../services/api"
 import { Toaster } from "@/components/ui/toaster"
 import ThankYou from "./questionnaire/ThankYou"
+import ResponseDetails from "./admin/ResponseDetails"
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -73,6 +74,8 @@ export default function App() {
         {/* Direct questionnaire access for respondents */}
         <Route path="/questionnaire/:token" element={<Questionnaire />} />
         <Route path="/thank-you/:token" element={<ThankYou />} />
+        {/* Response details page */}
+        <Route path="/admin/responses/:responseId" element={<ResponseDetails />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />

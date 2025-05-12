@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, ArrowRight, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowRight, Loader2, BrainCircuit } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 
 interface QuestionnaireFormProps {
@@ -23,6 +23,7 @@ export default function QuestionnaireForm({ questionnaire, onSubmit }: Questionn
   const [currentStep, setCurrentStep] = useState(0)
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionStage, setSubmissionStage] = useState<string | null>(null)
   const [startTime, setStartTime] = useState(Date.now())
 
   useEffect(() => {
@@ -102,6 +103,7 @@ export default function QuestionnaireForm({ questionnaire, onSubmit }: Questionn
 
     setError("")
     setIsSubmitting(true)
+    setSubmissionStage("Preparing your answers for submission...")
 
     // Calculate time spent
     const duration = Math.floor((Date.now() - startTime) / 1000)
@@ -133,13 +135,23 @@ export default function QuestionnaireForm({ questionnaire, onSubmit }: Questionn
     console.log("Submitting formatted answers:", formattedAnswers)
 
     try {
+      setSubmissionStage("Submitting your answers...")
+
+      // Short delay to show the first stage
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      setSubmissionStage("Analyzing your responses against policy guidelines...")
+
       const success = await onSubmit(formattedAnswers, duration, verificationAnswer)
+
       if (!success) {
         setError("Failed to submit questionnaire. Please try again.")
+        setSubmissionStage(null)
       }
     } catch (error) {
       console.error("Error submitting questionnaire:", error)
       setError("Failed to submit questionnaire. Please try again.")
+      setSubmissionStage(null)
     } finally {
       setIsSubmitting(false)
     }
@@ -164,6 +176,29 @@ export default function QuestionnaireForm({ questionnaire, onSubmit }: Questionn
             No questions found for this questionnaire. Please contact the administrator.
           </AlertDescription>
         </Alert>
+      </CardContent>
+    )
+  }
+
+  // If submitting, show the submission status
+  if (isSubmitting && submissionStage) {
+    return (
+      <CardContent className="pt-6 flex flex-col items-center justify-center min-h-[300px]">
+        <div className="text-center space-y-6">
+          <BrainCircuit className="h-16 w-16 text-primary animate-pulse mx-auto" />
+          <h3 className="text-xl font-medium text-primary">{submissionStage}</h3>
+          <div className="max-w-md mx-auto">
+            <Progress
+              value={submissionStage.includes("Preparing") ? 33 : submissionStage.includes("Submitting") ? 66 : 90}
+              className="h-2"
+            />
+          </div>
+          <p className="text-sm text-gray-600 max-w-md">
+            {submissionStage.includes("Analyzing")
+              ? "We're evaluating your responses against the policy guidelines to provide personalized feedback. This may take a moment..."
+              : "Please wait while we process your submission..."}
+          </p>
+        </div>
       </CardContent>
     )
   }

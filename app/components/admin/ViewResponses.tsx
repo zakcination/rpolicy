@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { MessageSquare, AlertCircle, ChevronDown, ChevronUp, FileText, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -18,8 +18,7 @@ export default function ViewResponses() {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
-  const [selectedResponse, setSelectedResponse] = useState<any>(null)
-  const [questionMap, setQuestionMap] = useState<Record<string, any>>({})
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchResponses = async () => {
@@ -85,7 +84,6 @@ export default function ViewResponses() {
         }
 
         setQuestionnaires(questionnairesData)
-        setQuestionMap(questionMapping)
       } catch (error) {
         console.error("Error fetching responses:", error)
         setError("Failed to load responses. Please try again later.")
@@ -98,11 +96,7 @@ export default function ViewResponses() {
   }, [])
 
   const handleResponseClick = (response: any) => {
-    setSelectedResponse(response)
-  }
-
-  const handleCloseModal = () => {
-    setSelectedResponse(null)
+    navigate(`/admin/responses/${response._id}`)
   }
 
   const toggleGroup = (token: string) => {
@@ -379,173 +373,6 @@ export default function ViewResponses() {
           })}
         </div>
       )}
-
-      <Dialog open={!!selectedResponse} onOpenChange={(open) => !open && handleCloseModal()}>
-        {selectedResponse && (
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle className="text-primary">Response Details</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 mt-2">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Questionnaire</p>
-                  <p className="mt-1">{selectedResponse.token}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Submitted At</p>
-                  <p className="mt-1">{new Date(selectedResponse.submittedAt).toLocaleString()}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Duration</p>
-                  <p className="mt-1">{formatDuration(selectedResponse.duration)}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Discipline</p>
-                  <p className="mt-1">
-                    {questionnaires[selectedResponse.token]?.policyId?.discipline ||
-                      questionnaires[selectedResponse.token]?.discipline ||
-                      selectedResponse.discipline ||
-                      "N/A"}
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-gray-500">Answers</p>
-                <div className="mt-1 max-h-60 overflow-y-auto border rounded-md p-2">
-                  {selectedResponse.answers?.map((answer: any, index: number) => (
-                    <div key={index} className="mb-4 pb-2 border-b border-gray-100 last:border-0">
-                      <p className="text-sm font-medium">
-                        Question {index + 1}: {questionMap[answer.questionId]?.text || "Unknown Question"}
-                      </p>
-                      <div className="mt-2 p-2 bg-secondary/10 rounded-md">
-                        <p className="text-sm">
-                          <span className="font-medium">Answer:</span> {answer.answer}
-                        </p>
-                        {questionMap[answer.questionId]?.type === "multiple_choice" && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Option from: {questionMap[answer.questionId]?.options.join(", ")}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )) || <p className="text-sm text-gray-500">No answers available</p>}
-                </div>
-              </div>
-
-              {selectedResponse.feedback && (
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Feedback</p>
-                  <div className="mt-1 max-h-60 overflow-y-auto border rounded-md p-2">
-                    {Array.isArray(selectedResponse.feedback) ? (
-                      selectedResponse.feedback.map((item, index) => (
-                        <div key={index} className="mb-4 pb-4 border-b border-gray-100 last:border-0">
-                          {item.questionStem && <p className="text-sm font-medium">{item.questionStem}</p>}
-
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {item.correctness && (
-                              <Badge
-                                variant={item.correctness.includes("Correct") ? "default" : "outline"}
-                                className={`text-xs ${
-                                  item.correctness.includes("Correct")
-                                    ? "bg-green-100 text-green-800 border-green-300"
-                                    : "bg-red-100 text-red-800 border-red-300"
-                                }`}
-                              >
-                                {item.correctness}
-                              </Badge>
-                            )}
-                            {item.fruitfulness && (
-                              <Badge variant="outline" className="text-xs">
-                                {item.fruitfulness}
-                              </Badge>
-                            )}
-                            {item.compliance && (
-                              <Badge
-                                variant={item.compliance.includes("Fully") ? "default" : "outline"}
-                                className={`text-xs ${
-                                  item.compliance.includes("Fully")
-                                    ? "bg-green-100 text-green-800 border-green-300"
-                                    : "bg-amber-100 text-amber-800 border-amber-300"
-                                }`}
-                              >
-                                {item.compliance}
-                              </Badge>
-                            )}
-                            {item.sensitivity && (
-                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-800 border-blue-200">
-                                {item.sensitivity}
-                              </Badge>
-                            )}
-                          </div>
-
-                          {item.recommendation && (
-                            <div className="mt-2">
-                              <p className="text-xs font-medium text-gray-600">Recommendation:</p>
-                              <p className="text-sm mt-1 p-2 bg-blue-50 rounded-md text-blue-800">
-                                {item.recommendation}
-                              </p>
-                            </div>
-                          )}
-
-                          {item.insight && (
-                            <div className="mt-2">
-                              <p className="text-xs font-medium text-gray-600">Insight:</p>
-                              <p className="text-sm mt-1 p-2 bg-purple-50 rounded-md text-purple-800">{item.insight}</p>
-                            </div>
-                          )}
-
-                          {item.text && (
-                            <div className="mt-2">
-                              <p className="text-xs font-medium text-gray-600">Feedback:</p>
-                              <p className="text-sm mt-1 p-2 bg-gray-50 rounded-md text-gray-800">{item.text}</p>
-                            </div>
-                          )}
-
-                          {item.status && (
-                            <div className="mt-2">
-                              <Badge
-                                className={`${
-                                  item.status === "Positive"
-                                    ? "bg-green-100 text-green-800"
-                                    : item.status === "Negative"
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-amber-100 text-amber-800"
-                                }`}
-                              >
-                                {item.status}
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm p-3 bg-secondary/20 rounded-md">
-                        {typeof selectedResponse.feedback === "string"
-                          ? selectedResponse.feedback
-                          : "No detailed feedback available"}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10"
-                onClick={handleCloseModal}
-              >
-                Close
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        )}
-      </Dialog>
     </div>
   )
 }

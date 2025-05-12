@@ -10,6 +10,7 @@ import ViewQuestionnaires from "./ViewQuestionnaires"
 import ViewResponses from "./ViewResponses"
 import QuestionnaireReport from "./QuestionnaireReport"
 import ViewReports from "./ViewReports"
+import ResponseDetails from "./ResponseDetails"
 import { Button } from "@/components/ui/button"
 import { LogOut, Menu } from "lucide-react"
 import HealthIndicator from "../shared/HealthIndicator"
@@ -26,6 +27,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   // Get current section title based on path
   const getTitle = () => {
     const path = location.pathname.split("/").pop() || ""
+
+    if (location.pathname.includes("/responses/")) {
+      return "Response Details"
+    }
 
     switch (path) {
       case "policy-upload":
@@ -126,6 +131,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <Route path="/questionnaire-generate" element={<GenerateQuestionnaire />} />
                 <Route path="/questionnaires" element={<ViewQuestionnaires />} />
                 <Route path="/responses" element={<ViewResponses />} />
+                <Route path="/responses/:responseId" element={<ResponseDetails />} />
                 <Route path="/reports" element={<ViewReports />} />
                 <Route path="/questionnaire/:token/report" element={<QuestionnaireReport />} />
               </Routes>
