@@ -106,11 +106,31 @@ export default function QuestionnaireForm({ questionnaire, onSubmit }: Questionn
     // Calculate time spent
     const duration = Math.floor((Date.now() - startTime) / 1000)
 
-    // Format answers for API
-    const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
-      questionId,
-      answer,
-    }))
+    // Format answers for API - convert multiple choice answers to option indices (a, b, c, d)
+    const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => {
+      const question = questions.find((q) => q.id === questionId)
+
+      // If it's a multiple-choice question, convert the answer to the option index (a, b, c, d)
+      if (question && question.type === "multiple-choice") {
+        const optionIndex = question.options.findIndex((option: string) => option === answer)
+        if (optionIndex !== -1) {
+          // Convert index to letter (0 -> 'a', 1 -> 'b', etc.)
+          const optionLetter = String.fromCharCode(97 + optionIndex) // 97 is ASCII for 'a'
+          return {
+            questionId,
+            answer: optionLetter,
+          }
+        }
+      }
+
+      // For open-ended questions or if option not found, use the answer as is
+      return {
+        questionId,
+        answer,
+      }
+    })
+
+    console.log("Submitting formatted answers:", formattedAnswers)
 
     try {
       const success = await onSubmit(formattedAnswers, duration, verificationAnswer)
