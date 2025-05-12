@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 18%;
+
+    /* Alqa Brand Colors */
+    --primary: 203 100% 40%; /* Azure Blue #0085CA */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 39 74% 86%; /* Warm Sand #F4E3C1 */
+    --secondary-foreground: 0 0% 18%;
+
+    --accent: 45 100% 50%; /* Golden Sun #FFC300 */
+    --accent-foreground: 0 0% 18%;
+
+    --muted: 39 74% 95%;
+    --muted-foreground: 0 0% 40%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 39 74% 86%;
+    --input: 39 74% 86%;
+    --ring: 203 100% 40%;
+
+    --radius: 0.75rem; /* Rounded card edges as specified */
+  }
+
+  .dark {
+    --background: 0 0% 18%;
+    --foreground: 0 0% 98%;
+
+    --primary: 203 100% 40%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 39 74% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --accent: 45 100% 50%;
+    --accent-foreground: 0 0% 18%;
+
+    --muted: 0 0% 25%;
+    --muted-foreground: 0 0% 70%;
+
+    --card: 0 0% 20%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 20%;
+    --popover-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 30%;
+    --input: 0 0% 30%;
+    --ring: 203 100% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-primary;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
