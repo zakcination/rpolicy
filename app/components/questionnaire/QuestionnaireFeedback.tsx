@@ -95,47 +95,18 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
 
   const { generalFeedback, questionFeedback } = normalizedFeedback()
 
-  if (
-    !feedback ||
-    (Array.isArray(feedback) &&
-      feedback.length === 0 &&
-      (!feedback?.report || (Array.isArray(feedback?.report) && feedback.report.length === 0)))
-  ) {
-    return (
-      <>
-        <CardContent className="pt-6">
-          <Alert className="bg-green-50 border-green-200">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">
-              Thank you for submitting your responses! Your feedback has been recorded.
-            </AlertDescription>
-          </Alert>
-
-          <div className="mt-6 p-4 bg-secondary/10 rounded-md">
-            <h3 className="font-medium text-gray-800 mb-2">Your Submission</h3>
-            <p className="text-sm text-gray-600">
-              Your responses have been successfully submitted. We appreciate your participation in helping us improve
-              our policies.
-            </p>
-          </div>
-        </CardContent>
-
-        <CardFooter className="border-t border-secondary pt-6">
-          <Button onClick={handleBackToSurveys} className="w-full bg-primary hover:bg-primary/90">
-            Back to Surveys
-          </Button>
-        </CardFooter>
-      </>
-    )
-  }
+  // Check if we have any feedback to display
+  const hasFeedback = generalFeedback.length > 0 || questionFeedback.length > 0
 
   return (
     <>
       <CardContent className="pt-6 space-y-6">
+        {/* Always show success message */}
         <Alert className="bg-green-50 border-green-200">
           <CheckCircle className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800">
-            Thank you for submitting your responses! Here's some feedback based on your answers.
+            Thank you for submitting your responses! Your feedback has been recorded.
+            {hasFeedback && " Here's some feedback based on your answers."}
           </AlertDescription>
         </Alert>
 
@@ -248,11 +219,33 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
           </div>
         )}
 
+        {/* Your Submission Section - Always show this */}
         <div className="p-4 bg-secondary/10 rounded-md">
-          <h3 className="font-medium text-gray-800 mb-2">What's Next?</h3>
+          <h3 className="font-medium text-gray-800 mb-2">Your Submission</h3>
           <p className="text-sm text-gray-600">
-            Your feedback will be analyzed along with other responses to help us improve our {questionnaire.discipline}{" "}
-            policy. Thank you for your valuable contribution to our school community.
+            Your responses have been successfully submitted. We appreciate your participation in helping us improve our
+            policies.
+          </p>
+
+          {/* Show submission summary */}
+          {answers && answers.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <h4 className="text-sm font-medium text-gray-700">Submission Summary:</h4>
+              <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                <div>Questions Answered: {answers.length}</div>
+                <div>Questionnaire: {questionnaire?.discipline || "Policy Feedback"}</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* What's Next Section */}
+        <div className="p-4 bg-blue-50 rounded-md border border-blue-200">
+          <h3 className="font-medium text-blue-800 mb-2">What's Next?</h3>
+          <p className="text-sm text-blue-700">
+            Your feedback will be analyzed along with other responses to help us improve our{" "}
+            {questionnaire?.discipline || "school"} policy. Thank you for your valuable contribution to our school
+            community.
           </p>
         </div>
       </CardContent>
