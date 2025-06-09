@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, ArrowLeft, FileText, Eye } from "lucide-react"
+import { Download, ArrowLeft, FileText, Eye, ChevronDown, ChevronUp } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
@@ -19,8 +19,8 @@ export default function QuestionnaireReport() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [error, setError] = useState("")
   const [questionOptions, setQuestionOptions] = useState<Record<string, string[]>>({})
-  // Add state for tracking completed suggestions
   const [completedSuggestions, setCompletedSuggestions] = useState<Record<string, boolean>>({})
+  const [expandedThemes, setExpandedThemes] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -46,6 +46,7 @@ export default function QuestionnaireReport() {
 
         // Fetch report
         const reportResponse = await api.get(`/questionnaire/${token}/report`)
+        console.log("Full report data:", reportResponse.data)
         setReport(reportResponse.data.report)
 
         // Record view
@@ -91,9 +92,17 @@ export default function QuestionnaireReport() {
     return questionOptions[questionStem][optionKey.charCodeAt(0) - 97]
   }
 
-  // Add a function to toggle suggestion completion
+  // Function to toggle suggestion completion
   const toggleSuggestionCompletion = (index: number) => {
     setCompletedSuggestions((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }))
+  }
+
+  // Function to toggle theme expansion
+  const toggleThemeExpansion = (index: number) => {
+    setExpandedThemes((prev) => ({
       ...prev,
       [index]: !prev[index],
     }))
@@ -146,6 +155,13 @@ export default function QuestionnaireReport() {
         </Button>
       </div>
 
+      {/* Participation Rate */}
+      {report.participationRate && (
+        <div className="text-sm font-semibold text-gray-600 mb-4">
+          Participation Rate: <span className="text-primary text-lg">{report.participationRate}</span>
+        </div>
+      )}
+
       {questionnaire && (
         <Card className="bg-white">
           <CardHeader className="pb-2 bg-secondary/10">
@@ -187,7 +203,8 @@ export default function QuestionnaireReport() {
         </Card>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Policy Adoption Status */}
+      {report.policyAdoptionStatus && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-primary">Policy Adoption Status</CardTitle>
@@ -196,8 +213,9 @@ export default function QuestionnaireReport() {
             <p className="py-4">{report.policyAdoptionStatus}</p>
           </CardContent>
         </Card>
-      </div>
+      )}
 
+      {/* Quantitative Metrics */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg text-primary">Quantitative Metrics</CardTitle>
@@ -255,7 +273,8 @@ export default function QuestionnaireReport() {
         </CardContent>
       </Card>
 
-      {report.qualitativeThemes && Array.isArray(report.qualitativeThemes) && (
+      {/* Qualitative Themes */}
+      {report.qualitativeThemes && Array.isArray(report.qualitativeThemes) && report.qualitativeThemes.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-primary">Qualitative Themes</CardTitle>
@@ -263,20 +282,35 @@ export default function QuestionnaireReport() {
           <CardContent>
             <div className="space-y-4">
               {report.qualitativeThemes.map((theme: any, index: number) => (
-                <div key={index} className="border-b pb-4 last:border-0">
-                  <h4 className="font-medium">{theme.theme}</h4>
-                  <p className="text-sm mt-1">{theme.description}</p>
+                <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div
+                    className="flex justify-between items-center cursor-pointer"
+                    onClick={() => toggleThemeExpansion(index)}
+                  >
+                    <h4 className="font-medium text-primary">{theme.theme}</h4>
+                    {expandedThemes[index] ? (
+                      <ChevronUp className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-gray-500" />
+                    )}
+                  </div>
 
-                  {theme.exampleQuotes && theme.exampleQuotes.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500">Example quotes:</p>
-                      <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
-                        {theme.exampleQuotes.map((quote: string, i: number) => (
-                          <li key={i} className="italic">
-                            "{quote}"
-                          </li>
-                        ))}
-                      </ul>
+                  {expandedThemes[index] && (
+                    <div className="mt-3 space-y-3">
+                      <p className="text-sm text-gray-700">{theme.description}</p>
+
+                      {theme.exampleQuotes && theme.exampleQuotes.length > 0 && (
+                        <div>
+                          <p className="text-xs font-medium text-gray-500 mb-2">Example quotes:</p>
+                          <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                            {theme.exampleQuotes.map((quote: string, i: number) => (
+                              <li key={i} className="italic">
+                                "{quote}"
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -286,7 +320,8 @@ export default function QuestionnaireReport() {
         </Card>
       )}
 
-      {report.editSuggestions && Array.isArray(report.editSuggestions) && (
+      {/* Edit Suggestions */}
+      {report.editSuggestions && Array.isArray(report.editSuggestions) && report.editSuggestions.length > 0 && (
         <Card>
           <CardHeader className="pb-2 flex flex-row justify-between items-center">
             <CardTitle className="text-lg text-primary">Edit Suggestions</CardTitle>
@@ -299,33 +334,104 @@ export default function QuestionnaireReport() {
               {report.editSuggestions.map((suggestion: any, index: number) => (
                 <div
                   key={index}
-                  className={`border-b pb-4 last:border-0 ${completedSuggestions[index] ? "opacity-60" : ""}`}
+                  className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
+                    completedSuggestions[index] ? "opacity-60 bg-gray-50" : ""
+                  }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1">
-                      <input
-                        type="checkbox"
-                        id={`suggestion-${index}`}
-                        checked={!!completedSuggestions[index]}
-                        onChange={() => toggleSuggestionCompletion(index)}
-                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label
-                        htmlFor={`suggestion-${index}`}
-                        className={`font-medium ${completedSuggestions[index] ? "line-through text-gray-500" : ""}`}
-                      >
-                        {suggestion.section}
-                      </label>
-                      <p className={`text-sm mt-1 ${completedSuggestions[index] ? "text-gray-500" : "text-gray-700"}`}>
-                        {suggestion.suggestion}
-                      </p>
-                    </div>
+                  <div className="flex justify-between items-start mb-3">
+                    <h5 className="font-semibold text-primary">{suggestion.section}</h5>
+                    <Badge variant={suggestion.priority === "High" ? "destructive" : "secondary"} className="ml-2">
+                      {suggestion.priority || "Medium"}
+                    </Badge>
                   </div>
+
+                  {suggestion.currentState && (
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      <span className="text-gray-500">Current State:</span> {suggestion.currentState}
+                    </p>
+                  )}
+
+                  <p className="text-sm mb-2">
+                    <span className="font-medium">Suggestion:</span> {suggestion.suggestion}
+                  </p>
+
+                  {suggestion.rationale && (
+                    <p className="text-xs italic text-gray-500 mb-2">
+                      <span className="font-medium">Rationale:</span> {suggestion.rationale}
+                    </p>
+                  )}
+
+                  {suggestion.implementation && (
+                    <div className="mb-2">
+                      <p className="text-sm font-semibold mb-1">Implementation:</p>
+                      <div className="text-sm text-gray-700">
+                        {suggestion.implementation
+                          .split(/\d+\./)
+                          .filter(Boolean)
+                          .map((step: string, i: number) => (
+                            <div key={i} className="flex items-start mb-1">
+                              <span className="font-medium mr-2">{i + 1}.</span>
+                              <span>{step.trim()}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {suggestion.expectedImpact && (
+                    <div className="mb-3">
+                      <p className="text-sm font-semibold">Expected Impact:</p>
+                      <p className="text-sm text-gray-700">{suggestion.expectedImpact}</p>
+                    </div>
+                  )}
+
+                  <Button
+                    size="sm"
+                    variant={completedSuggestions[index] ? "outline" : "default"}
+                    onClick={() => toggleSuggestionCompletion(index)}
+                    className={completedSuggestions[index] ? "border-green-500 text-green-600" : ""}
+                  >
+                    {completedSuggestions[index] ? "Mark Incomplete" : "Mark Complete"}
+                  </Button>
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Trends */}
+      {report.trends && Array.isArray(report.trends) && report.trends.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-primary">Trends</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc list-inside text-sm space-y-2">
+              {report.trends.map((trend: any, i: number) => (
+                <li key={i}>
+                  <span className="font-semibold">{trend.pattern}:</span> {trend.evidence}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Recommendations */}
+      {report.recommendations && Array.isArray(report.recommendations) && report.recommendations.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-primary">Recommendations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc list-inside text-sm space-y-2">
+              {report.recommendations.map((rec: any, i: number) => (
+                <li key={i}>
+                  <strong>{rec.area}:</strong> {rec.suggestion}
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       )}
