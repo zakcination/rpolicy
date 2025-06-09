@@ -210,7 +210,25 @@ export default function QuestionnaireReport() {
             <CardTitle className="text-lg text-primary">Policy Adoption Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="py-4">{report.policyAdoptionStatus}</p>
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-md">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-blue-800">Assessment Summary</h3>
+                  <div className="mt-2 text-sm text-blue-700">
+                    <p className="leading-relaxed">{report.policyAdoptionStatus}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -339,60 +357,90 @@ export default function QuestionnaireReport() {
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <h5 className="font-semibold text-primary">{suggestion.section}</h5>
-                    <Badge variant={suggestion.priority === "High" ? "destructive" : "secondary"} className="ml-2">
+                    <h5 className="font-semibold text-primary text-base leading-relaxed">{suggestion.section}</h5>
+                    <Badge
+                      variant={suggestion.priority === "High" ? "destructive" : "secondary"}
+                      className="ml-2 flex-shrink-0"
+                    >
                       {suggestion.priority || "Medium"}
                     </Badge>
                   </div>
 
                   {suggestion.currentState && (
-                    <p className="text-sm font-medium text-gray-700 mb-2">
-                      <span className="text-gray-500">Current State:</span> {suggestion.currentState}
-                    </p>
+                    <div className="mb-3 p-3 bg-amber-50 border-l-4 border-amber-400 rounded-r-md">
+                      <p className="text-sm font-medium text-amber-800">Current State</p>
+                      <p className="text-sm text-amber-700 mt-1 leading-relaxed">{suggestion.currentState}</p>
+                    </div>
                   )}
 
-                  <p className="text-sm mb-2">
-                    <span className="font-medium">Suggestion:</span> {suggestion.suggestion}
-                  </p>
+                  <div className="mb-3 p-3 bg-green-50 border-l-4 border-green-400 rounded-r-md">
+                    <p className="text-sm font-medium text-green-800">Suggested Action</p>
+                    <p className="text-sm text-green-700 mt-1 leading-relaxed">{suggestion.suggestion}</p>
+                  </div>
 
                   {suggestion.rationale && (
-                    <p className="text-xs italic text-gray-500 mb-2">
-                      <span className="font-medium">Rationale:</span> {suggestion.rationale}
-                    </p>
+                    <div className="mb-3 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-md">
+                      <p className="text-sm font-medium text-blue-800">Rationale</p>
+                      <p className="text-sm text-blue-700 mt-1 leading-relaxed">{suggestion.rationale}</p>
+                    </div>
                   )}
 
                   {suggestion.implementation && (
-                    <div className="mb-2">
-                      <p className="text-sm font-semibold mb-1">Implementation:</p>
-                      <div className="text-sm text-gray-700">
+                    <div className="mb-3">
+                      <p className="text-sm font-semibold mb-2 text-gray-800">Implementation Steps:</p>
+                      <div className="bg-gray-50 p-3 rounded-md">
                         {suggestion.implementation
-                          .split(/\d+\./)
-                          .filter(Boolean)
-                          .map((step: string, i: number) => (
-                            <div key={i} className="flex items-start mb-1">
-                              <span className="font-medium mr-2">{i + 1}.</span>
-                              <span>{step.trim()}</span>
-                            </div>
-                          ))}
+                          .split(/(?=\d+\.)/)
+                          .filter((step: string) => step.trim())
+                          .map((step: string, i: number) => {
+                            const cleanStep = step.replace(/^\d+\.\s*/, "").trim()
+                            return cleanStep ? (
+                              <div key={i} className="flex items-start mb-2 last:mb-0">
+                                <span className="inline-flex items-center justify-center w-6 h-6 bg-primary text-white text-xs font-medium rounded-full mr-3 flex-shrink-0 mt-0.5">
+                                  {i + 1}
+                                </span>
+                                <span className="text-sm text-gray-700 leading-relaxed">{cleanStep}</span>
+                              </div>
+                            ) : null
+                          })}
                       </div>
                     </div>
                   )}
 
                   {suggestion.expectedImpact && (
-                    <div className="mb-3">
-                      <p className="text-sm font-semibold">Expected Impact:</p>
-                      <p className="text-sm text-gray-700">{suggestion.expectedImpact}</p>
+                    <div className="mb-4 p-3 bg-purple-50 border-l-4 border-purple-400 rounded-r-md">
+                      <p className="text-sm font-medium text-purple-800">Expected Impact</p>
+                      <p className="text-sm text-purple-700 mt-1 leading-relaxed">{suggestion.expectedImpact}</p>
                     </div>
                   )}
 
-                  <Button
-                    size="sm"
-                    variant={completedSuggestions[index] ? "outline" : "default"}
-                    onClick={() => toggleSuggestionCompletion(index)}
-                    className={completedSuggestions[index] ? "border-green-500 text-green-600" : ""}
-                  >
-                    {completedSuggestions[index] ? "Mark Incomplete" : "Mark Complete"}
-                  </Button>
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`suggestion-${index}`}
+                        checked={!!completedSuggestions[index]}
+                        onChange={() => toggleSuggestionCompletion(index)}
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label
+                        htmlFor={`suggestion-${index}`}
+                        className={`ml-2 text-sm ${
+                          completedSuggestions[index] ? "line-through text-gray-500" : "text-gray-700"
+                        }`}
+                      >
+                        Mark as completed
+                      </label>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={completedSuggestions[index] ? "outline" : "default"}
+                      onClick={() => toggleSuggestionCompletion(index)}
+                      className={completedSuggestions[index] ? "border-green-500 text-green-600" : ""}
+                    >
+                      {completedSuggestions[index] ? "Completed ✓" : "Mark Complete"}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
