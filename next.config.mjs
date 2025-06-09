@@ -10,8 +10,19 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
   async rewrites() {
     return [
+      {
+        source: '/questionnaire/:token',
+        destination: '/questionnaire/:token',
+      },
+      {
+        source: '/admin/:path*',
+        destination: '/admin/:path*',
+      },
       {
         source: '/:path*',
         destination: '/',
