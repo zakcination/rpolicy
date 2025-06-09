@@ -97,10 +97,10 @@ importers:
         version: 2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2)
       '@sveltejs/kit':
         specifier: latest
-        version: 2.21.2(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
+        version: 2.21.3(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
       '@vercel/analytics':
         specifier: latest
-        version: 1.5.0(@remix-run/react@2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2))(@sveltejs/kit@2.21.2(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(next@14.2.16(react-dom@18.0.0(react@18.0.0))(react@18.0.0))(react@18.0.0)(svelte@5.33.18)(vue-router@4.5.1(vue@3.5.16(typescript@5.0.2)))(vue@3.5.16(typescript@5.0.2))
+        version: 1.5.0(@remix-run/react@2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2))(@sveltejs/kit@2.21.3(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(next@14.2.16(react-dom@18.0.0(react@18.0.0))(react@18.0.0))(react@18.0.0)(svelte@5.33.18)(vue-router@4.5.1(vue@3.5.16(typescript@5.0.2)))(vue@3.5.16(typescript@5.0.2))
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.0)
@@ -428,68 +428,68 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@napi-rs/canvas-android-arm64@0.1.70':
-    resolution: {integrity: sha512-I/YOuQ0wbkVYxVaYtCgN42WKTYxNqFA0gTcTrHIGG1jfpDSyZWII/uHcjOo4nzd19io6Y4+/BqP8E5hJgf9OmQ==}
+  '@napi-rs/canvas-android-arm64@0.1.71':
+    resolution: {integrity: sha512-cxi3VCotIOS9kNFQI7dcysbVJi106pxryVY1Hi85pX+ZeqahRyeqc/NsLaZ998Ae99+F3HI5X/39G1Y/Byrf0A==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
 
-  '@napi-rs/canvas-darwin-arm64@0.1.70':
-    resolution: {integrity: sha512-4pPGyXetHIHkw2TOJHujt3mkCP8LdDu8+CT15ld9Id39c752RcI0amDHSuMLMQfAjvusA9B5kKxazwjMGjEJpQ==}
+  '@napi-rs/canvas-darwin-arm64@0.1.71':
+    resolution: {integrity: sha512-7Y4D/6vIuMLYsVNtRM/w2j0+fB1GyqeOxc7I0BTx8eLP1S6BZE2Rj6zJfdG+zmLEOW0IlHa+VQq1q2MUAjW84w==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@napi-rs/canvas-darwin-x64@0.1.70':
-    resolution: {integrity: sha512-+2N6Os9LbkmDMHL+raknrUcLQhsXzc5CSXRbXws9C3pv/mjHRVszQ9dhFUUe9FjfPhCJznO6USVdwOtu7pOrzQ==}
+  '@napi-rs/canvas-darwin-x64@0.1.71':
+    resolution: {integrity: sha512-Z0IUqxclrYdfVt/SK9nKCzUHTOXKTWiygtO71YCzs0OtxKdNI7GJRJdYG48wXZEDQ/pqTF4F7Ifgtidfc2tYpg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
 
-  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.70':
-    resolution: {integrity: sha512-QjscX9OaKq/990sVhSMj581xuqLgiaPVMjjYvWaCmAJRkNQ004QfoSMEm3FoTqM4DRoquP8jvuEXScVJsc1rqQ==}
+  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.71':
+    resolution: {integrity: sha512-KlpqqCASak5ruY+UIolJgmhMZ9Pa2o1QyaNu648L8sz4WNBbNa+aOT60XCLCL1VIKLv11B3MlNgiOHoYNmDhXQ==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
 
-  '@napi-rs/canvas-linux-arm64-gnu@0.1.70':
-    resolution: {integrity: sha512-LNakMOwwqwiHIwMpnMAbFRczQMQ7TkkMyATqFCOtUJNlE6LPP/QiUj/mlFrNbUn/hctqShJ60gWEb52ZTALbVw==}
+  '@napi-rs/canvas-linux-arm64-gnu@0.1.71':
+    resolution: {integrity: sha512-bdGZCGu8YQNAiu3nkIVVUp6nIn6fPd36IuZsLXTG027E52KyIuZ3obCxehSwjDIUNkFWvmff5D6JYfWwAoioEw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@napi-rs/canvas-linux-arm64-musl@0.1.70':
-    resolution: {integrity: sha512-wBTOllEYNfJCHOdZj9v8gLzZ4oY3oyPX8MSRvaxPm/s7RfEXxCyZ8OhJ5xAyicsDdbE5YBZqdmaaeP5+xKxvtg==}
+  '@napi-rs/canvas-linux-arm64-musl@0.1.71':
+    resolution: {integrity: sha512-1R5sMWe9ur8uM+hAeylBwG0b6UHDR+iWQNgzXmF9vbBYRooQvmDWqpcgytKLJAC0vnWhIkKwqd7yExn7cwczmg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@napi-rs/canvas-linux-riscv64-gnu@0.1.70':
-    resolution: {integrity: sha512-GVUUPC8TuuFqHip0rxHkUqArQnlzmlXmTEBuXAWdgCv85zTCFH8nOHk/YCF5yo0Z2eOm8nOi90aWs0leJ4OE5Q==}
+  '@napi-rs/canvas-linux-riscv64-gnu@0.1.71':
+    resolution: {integrity: sha512-xjjKsipueuG+LdKIk6/uAlqdo+rzGcmNpTZPXdakIT1sHX4NNSnQTzjRaj9Gh96Czjd9G89UWR0KIlE7fwOgFA==}
     engines: {node: '>= 10'}
     cpu: [riscv64]
     os: [linux]
 
-  '@napi-rs/canvas-linux-x64-gnu@0.1.70':
-    resolution: {integrity: sha512-/kvUa2lZRwGNyfznSn5t1ShWJnr/m5acSlhTV3eXECafObjl0VBuA1HJw0QrilLpb4Fe0VLywkpD1NsMoVDROQ==}
+  '@napi-rs/canvas-linux-x64-gnu@0.1.71':
+    resolution: {integrity: sha512-3s6YpklXDB4OeeULG1XTRyKrKAOo7c3HHEqM9A6N4STSjMaJtzmpp7tB/JTvAFeOeFte6gWN8IwC+7AjGJ6MpQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@napi-rs/canvas-linux-x64-musl@0.1.70':
-    resolution: {integrity: sha512-aqlv8MLpycoMKRmds7JWCfVwNf1fiZxaU7JwJs9/ExjTD8lX2KjsO7CTeAj5Cl4aEuzxUWbJPUUE2Qu9cZ1vfg==}
+  '@napi-rs/canvas-linux-x64-musl@0.1.71':
+    resolution: {integrity: sha512-5v9aCLzCXw7u10ray5juQMdl7TykZSn1X5AIGYwBvTAcKSgrqaR9QkRxp1Lqk3njQmFekOW1SFN9bZ/i/6y6kA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@napi-rs/canvas-win32-x64-msvc@0.1.70':
-    resolution: {integrity: sha512-Q9QU3WIpwBTVHk4cPfBjGHGU4U0llQYRXgJtFtYqqGNEOKVN4OT6PQ+ve63xwIPODMpZ0HHyj/KLGc9CWc3EtQ==}
+  '@napi-rs/canvas-win32-x64-msvc@0.1.71':
+    resolution: {integrity: sha512-oJughk6xjsRIr0Rd9EqjmZmhIMkvcPuXgr3MNn2QexTqn+YFOizrwHS5ha0BDfFl7TEGRvwaDUXBQtu8JKXb8A==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
 
-  '@napi-rs/canvas@0.1.70':
-    resolution: {integrity: sha512-nD6NGa4JbNYSZYsTnLGrqe9Kn/lCkA4ybXt8sx5ojDqZjr2i0TWAHxx/vhgfjX+i3hCdKWufxYwi7CfXqtITSA==}
+  '@napi-rs/canvas@0.1.71':
+    resolution: {integrity: sha512-92ybDocKl6JM48ZpYbj+A7Qt45IaTABDk0y3sDecEQfgdhfNzJtEityqNHoCZ4Vty2dldPkJhxgvOnbrQMXTTA==}
     engines: {node: '>= 10'}
 
   '@next/env@14.2.16':
@@ -1466,8 +1466,8 @@ packages:
     peerDependencies:
       acorn: ^8.9.0
 
-  '@sveltejs/kit@2.21.2':
-    resolution: {integrity: sha512-EMYTY4+rNa7TaRZYzCqhQslEkACEZzWc363jOYuc90oJrgvlWTcgqTxcGSIJim48hPaXwYlHyatRnnMmTFf5tA==}
+  '@sveltejs/kit@2.21.3':
+    resolution: {integrity: sha512-Bd05srNOaqP05qnytjg/KkWNlkcwEpE76s0xGSlgzL4I8pLyrK3c9+a7zMCquoiEEIZF2ecGTn6Fj/lELjaa8A==}
     engines: {node: '>=18.13'}
     hasBin: true
     peerDependencies:
@@ -1608,8 +1608,8 @@ packages:
   '@web3-storage/multipart-parser@1.0.0':
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
 
-  acorn@8.14.1:
-    resolution: {integrity: sha512-OvQ/2pUDKmgfCg++xsTX1wGxfTaszcHVcTctW4UJB4hibJx2HXxxO5UmVgyjMa+ZDsiaf5wWLXYpRWMmBI0QHg==}
+  acorn@8.15.0:
+    resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -2835,48 +2835,48 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@napi-rs/canvas-android-arm64@0.1.70':
+  '@napi-rs/canvas-android-arm64@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-darwin-arm64@0.1.70':
+  '@napi-rs/canvas-darwin-arm64@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-darwin-x64@0.1.70':
+  '@napi-rs/canvas-darwin-x64@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.70':
+  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-arm64-gnu@0.1.70':
+  '@napi-rs/canvas-linux-arm64-gnu@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-arm64-musl@0.1.70':
+  '@napi-rs/canvas-linux-arm64-musl@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-riscv64-gnu@0.1.70':
+  '@napi-rs/canvas-linux-riscv64-gnu@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-x64-gnu@0.1.70':
+  '@napi-rs/canvas-linux-x64-gnu@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-linux-x64-musl@0.1.70':
+  '@napi-rs/canvas-linux-x64-musl@0.1.71':
     optional: true
 
-  '@napi-rs/canvas-win32-x64-msvc@0.1.70':
+  '@napi-rs/canvas-win32-x64-msvc@0.1.71':
     optional: true
 
-  '@napi-rs/canvas@0.1.70':
+  '@napi-rs/canvas@0.1.71':
     optionalDependencies:
-      '@napi-rs/canvas-android-arm64': 0.1.70
-      '@napi-rs/canvas-darwin-arm64': 0.1.70
-      '@napi-rs/canvas-darwin-x64': 0.1.70
-      '@napi-rs/canvas-linux-arm-gnueabihf': 0.1.70
-      '@napi-rs/canvas-linux-arm64-gnu': 0.1.70
-      '@napi-rs/canvas-linux-arm64-musl': 0.1.70
-      '@napi-rs/canvas-linux-riscv64-gnu': 0.1.70
-      '@napi-rs/canvas-linux-x64-gnu': 0.1.70
-      '@napi-rs/canvas-linux-x64-musl': 0.1.70
-      '@napi-rs/canvas-win32-x64-msvc': 0.1.70
+      '@napi-rs/canvas-android-arm64': 0.1.71
+      '@napi-rs/canvas-darwin-arm64': 0.1.71
+      '@napi-rs/canvas-darwin-x64': 0.1.71
+      '@napi-rs/canvas-linux-arm-gnueabihf': 0.1.71
+      '@napi-rs/canvas-linux-arm64-gnu': 0.1.71
+      '@napi-rs/canvas-linux-arm64-musl': 0.1.71
+      '@napi-rs/canvas-linux-riscv64-gnu': 0.1.71
+      '@napi-rs/canvas-linux-x64-gnu': 0.1.71
+      '@napi-rs/canvas-linux-x64-musl': 0.1.71
+      '@napi-rs/canvas-win32-x64-msvc': 0.1.71
     optional: true
 
   '@next/env@14.2.16': {}
@@ -3793,16 +3793,16 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.42.0':
     optional: true
 
-  '@sveltejs/acorn-typescript@1.0.5(acorn@8.14.1)':
+  '@sveltejs/acorn-typescript@1.0.5(acorn@8.15.0)':
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
-  '@sveltejs/kit@2.21.2(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))':
+  '@sveltejs/kit@2.21.3(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))':
     dependencies:
-      '@sveltejs/acorn-typescript': 1.0.5(acorn@8.14.1)
+      '@sveltejs/acorn-typescript': 1.0.5(acorn@8.15.0)
       '@sveltejs/vite-plugin-svelte': 5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
       '@types/cookie': 0.6.0
-      acorn: 8.14.1
+      acorn: 8.15.0
       cookie: 0.6.0
       devalue: 5.1.1
       esm-env: 1.2.2
@@ -3814,6 +3814,7 @@ snapshots:
       sirv: 3.0.1
       svelte: 5.33.18
       vite: 6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)
+      vitefu: 1.0.6(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
 
   '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))':
     dependencies:
@@ -3892,10 +3893,10 @@ snapshots:
 
   '@types/scheduler@0.26.0': {}
 
-  '@vercel/analytics@1.5.0(@remix-run/react@2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2))(@sveltejs/kit@2.21.2(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(next@14.2.16(react-dom@18.0.0(react@18.0.0))(react@18.0.0))(react@18.0.0)(svelte@5.33.18)(vue-router@4.5.1(vue@3.5.16(typescript@5.0.2)))(vue@3.5.16(typescript@5.0.2))':
+  '@vercel/analytics@1.5.0(@remix-run/react@2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2))(@sveltejs/kit@2.21.3(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(next@14.2.16(react-dom@18.0.0(react@18.0.0))(react@18.0.0))(react@18.0.0)(svelte@5.33.18)(vue-router@4.5.1(vue@3.5.16(typescript@5.0.2)))(vue@3.5.16(typescript@5.0.2))':
     optionalDependencies:
       '@remix-run/react': 2.16.8(react-dom@18.0.0(react@18.0.0))(react@18.0.0)(typescript@5.0.2)
-      '@sveltejs/kit': 2.21.2(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
+      '@sveltejs/kit': 2.21.3(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0)))(svelte@5.33.18)(vite@6.3.5(@types/node@22.0.0)(jiti@1.21.7)(yaml@2.8.0))
       next: 14.2.16(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
       react: 18.0.0
       svelte: 5.33.18
@@ -3960,7 +3961,7 @@ snapshots:
 
   '@web3-storage/multipart-parser@1.0.0': {}
 
-  acorn@8.14.1: {}
+  acorn@8.15.0: {}
 
   ansi-regex@5.0.1: {}
 
@@ -4501,7 +4502,7 @@ snapshots:
 
   pdfjs-dist@5.3.31:
     optionalDependencies:
-      '@napi-rs/canvas': 0.1.70
+      '@napi-rs/canvas': 0.1.71
 
   picocolors@1.1.1: {}
 
@@ -4816,9 +4817,9 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@jridgewell/sourcemap-codec': 1.5.0
-      '@sveltejs/acorn-typescript': 1.0.5(acorn@8.14.1)
+      '@sveltejs/acorn-typescript': 1.0.5(acorn@8.15.0)
       '@types/estree': 1.0.8
-      acorn: 8.14.1
+      acorn: 8.15.0
       aria-query: 5.3.2
       axobject-query: 4.1.0
       clsx: 2.1.1

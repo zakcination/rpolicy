@@ -81,6 +81,7 @@ export default function Questionnaire() {
 
       // If admin, show feedback immediately
       if (isAdmin) {
+        console.log("Full submission response:", response.data)
         setSubmissionData(response.data)
         setIsSubmitted(true)
         return true
@@ -205,7 +206,7 @@ export default function Questionnaire() {
 
           {isSubmitted && isAdmin ? (
             <QuestionnaireFeedback
-              feedback={submissionData?.feedback || []}
+              feedback={submissionData}
               answers={submissionData?.answers || []}
               questionnaire={questionnaire}
             />

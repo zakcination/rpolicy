@@ -97,19 +97,19 @@ export default function QuestionnaireFeedback({ feedback, answers, questionnaire
       }
     }
 
-    // Default case
+    // Default case - treat the feedback object itself as containing feedback data
     return { generalFeedback: [], questionFeedback: [] }
   }
 
   const { generalFeedback, questionFeedback } = normalizedFeedback()
 
   // Check if there's truly no feedback data at all
-  const hasNoFeedback =
-    !feedback ||
-    (Array.isArray(feedback) && feedback.length === 0) ||
-    (feedback && !feedback.report && !feedback.feedback && Object.keys(feedback).length === 0)
+  const hasAnyFeedback =
+    generalFeedback.length > 0 ||
+    questionFeedback.length > 0 ||
+    (feedback && typeof feedback === "object" && (feedback.report || feedback.feedback))
 
-  if (hasNoFeedback) {
+  if (!hasAnyFeedback) {
     return (
       <>
         <CardContent className="pt-6">
